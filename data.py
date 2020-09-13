@@ -1,7 +1,7 @@
 """
 # -- --------------------------------------------------------------------------------------------------- -- #
 # -- project: Comparison between pasive and active investment.                                           -- #
-# -- script: functions.py : python script for data collection                                            -- #
+# -- script: data.py : python script for data collection                                            -- #
 # -- author: AraceliCastillo                                                                             -- #
 # -- license: GPL-3.0 License                                                                            -- #
 # -- repository: https://github.com/AraceliCastillo/myst_if708243_lab1                                   -- #

@@ -79,10 +79,12 @@ df_activa = ft.df_activa
 
 # -- Paso 1.8 --
 # -- ---------------------------------------- DataFrame que contiene las operaciones diarias de la inversion activa - #
+# Obtener DataFrame diario de la inversion activa
 
 df_operaciones = ft.df_operaciones
 
 # -- Paso 1.9 --
 # -- -------------------------------------------------- DataFrame que contiene una comparacion de ambas inversiones - #
+# Obtener el Dataframe que compara con medidas definidas ambas inversiones
 
 df_medidas = ft.df_medidas
