@@ -2,7 +2,7 @@
 
 #### Description
 
-Insert here a brief description of the project, including, purpose, technologies used and context where it was created.
+In this proyect the proposal is to do a comparison between pasive and active investment. It will be done in python, in a context of university subject of the curriculum of Financial Engineering.
 
 #### Install dependencies
 
@@ -14,11 +14,12 @@ Or you can manually install one by one using the name and version in the file.
 
 #### Funcionalities
 
-Add here examples of core functionalities for the project in this repository.
+Simulation of pasive and active management with initial investement of $1,000,000 in a determined time.
+Final comparison between them.
 
 #### Author
 
-Add Name and a brief description on who you are.
+Araceli Soledad Castillo Fuhr nineth semester, financial engineering student.
 
 #### License 
 
@@ -28,4 +29,4 @@ Permissions of this strong copyleft license are conditioned on making available 
 
 #### Contact
 
-For more information in reggards of this repo, please contact name@email.com
+For more information in reggards of this repo, please contact araceli.castillo.fuhr@gmail.com

@@ -1,12 +1,13 @@
 """
 # -- --------------------------------------------------------------------------------------------------- -- #
-# -- project: A SHORT DESCRIPTION OF THE PROJECT                                                         -- #
-# -- script: data.py : python script for data collection                                                 -- #
-# -- author: YOUR GITHUB USER NAME                                                                       -- #
+# -- project: Comparison between pasive and active investment.                                           -- #
+# -- script: functions.py : python script for data collection                                            -- #
+# -- author: AraceliCastillo                                                                             -- #
 # -- license: GPL-3.0 License                                                                            -- #
-# -- repository: YOUR REPOSITORY URL                                                                     -- #
+# -- repository: https://github.com/AraceliCastillo/myst_if708243_lab1                                   -- #
 # -- --------------------------------------------------------------------------------------------------- -- #
 """
+
 
 # Librerias a utilizar
 

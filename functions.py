@@ -1,10 +1,10 @@
 """
 # -- --------------------------------------------------------------------------------------------------- -- #
-# -- project: A SHORT DESCRIPTION OF THE PROJECT                                                         -- #
-# -- script: data.py : python script for data collection                                                 -- #
-# -- author: YOUR GITHUB USER NAME                                                                       -- #
+# -- project: Comparison between pasive and active investment.                                           -- #
+# -- script: functions.py : python script for functions collection                                       -- #
+# -- author: AraceliCastillo                                                                             -- #
 # -- license: GPL-3.0 License                                                                            -- #
-# -- repository: YOUR REPOSITORY URL                                                                     -- #
+# -- repository: https://github.com/AraceliCastillo/myst_if708243_lab1                                   -- #
 # -- --------------------------------------------------------------------------------------------------- -- #
 """
 
@@ -41,15 +41,16 @@ def get_precio(datos, tickers, fecha):
     # Definimos la lista en la que se guardaran los precios.
     precios = []
     for j in tickers:
-        precio = datos.loc[j, 'Close'][fecha]  # Seleccionamos el precio de close para ticker y fecha correspondiente.
-        precios.append(precio)  # Guardamos en la lista los precios.
+        precio_dia = datos.loc[j, 'Close'][fecha]  # Seleccionamos el precio de close
+        # para ticker y fecha correspondiente.
+        precios.append(precio_dia)  # Guardamos en la lista los precios.
     return precios
 
 # -- --------------------------------------------------------------------------------------------------- -Paso 1.6 - #
 # Definimos nuestra posición de Portafolio en la primer fecha
 
 
-def get_posicion(datos, ticker, inversion, comision, pesos, fecha_i):
+def get_posicion(datos, ticker, inversion, valor_comision, pesos, fecha_i):
     """
     Funcion que retorna la posicion que se tomara para inversion activa, y el valor del portafolio
     en la fecha inicial de inversion.
@@ -59,7 +60,7 @@ def get_posicion(datos, ticker, inversion, comision, pesos, fecha_i):
     datos: df: DataFrame que contiene los datos en los que se buscara lo que se solicite.
     ticker: lista: lista de los tickers que compondran la posicion.
     inversion: float: Dinero con el que inicialas el portafolio.
-    comision: float: porcentaje de comision para los movimientos.
+    valor_comision: float: porcentaje de comision para los movimientos.
     pesos: lista: lista que contiene los pesos correspondientes a los tickers en la fecha de invesion.
     fecha_i: str: fecha de inicio de la inversion.
 
@@ -78,14 +79,15 @@ def get_posicion(datos, ticker, inversion, comision, pesos, fecha_i):
     """
     valores_portafolio = list()  # Definir lista para agregar los valores del portafolio
     valores_portafolio.append(inversion)  # Agregar el primer valor, el valor de inversion
-    precios = get_precio(datos, ticker, '31-01-18')  # Utilizar la funcion de obtener precios
+    precios = get_precio(datos, ticker, fecha_i)  # Utilizar la funcion de obtener precios
     valor_actual_portafolio = inversion * pesos  # Calcular cuanto dinero tendremos para cada accion
-    capital_poraccion = valor_actual_portafolio - (valor_actual_portafolio * comision)  # Capital disponible por accion
+    # Capital disponible por accion
+    capital_poraccion = valor_actual_portafolio - (valor_actual_portafolio * valor_comision)
     cant_acciones = np.trunc(capital_poraccion / precios)  # Cantidad de acciones a comprar
-    comision = cant_acciones * comision * precios  # Calculo de la comision por compra de acciones
-    comision_sum = np.sum(comision)  # Calculo de la comision total
-    costo_acciones = np.multiply(precios, cant_acciones)  # Calculo del costo total de las acciones
-    valores_portafolio.append(np.sum(costo_acciones))
+    calculo_comision = cant_acciones * valor_comision * precios  # Calculo de la comision por compra de acciones
+    comision_sum = np.sum(calculo_comision)  # Calculo de la comision total
+    costo = np.multiply(precios, cant_acciones)  # Calculo del costo total de las acciones
+    valores_portafolio.append(np.sum(costo))
     return valores_portafolio, cant_acciones, comision_sum, precios
 
 
@@ -122,24 +124,24 @@ def get_valores_port(datos, fechas, ticker, cant_acciones, valores_portafolio):
 
     a = 0
     # Iterar sobre las fechas
-    for i in fechas:
+    for p in fechas:
         a = a + 1  # Nombrar contador
         if a > 1:  # Calculamos a partir de la segunda fecha de inversion
-            precios = get_precio(datos, ticker, i)
-            costo_acciones = np.multiply(precios, cant_acciones)  # Costo total de acciones
-            total_gastado = costo_acciones
+            precios = get_precio(datos, ticker, p)
+            costo = np.multiply(precios, cant_acciones)  # Costo total de acciones
+            total_gastado = costo
             v_total = np.sum(total_gastado)
             valores_portafolio.append(v_total)
     return valores_portafolio
 
 
-valores_port = get_valores_port(dt.descarga, dt.files_date, dt.f_ticker, Cant_acciones, valores_port)
+valores_port_pasiva = get_valores_port(dt.descarga, dt.files_date, dt.f_ticker, Cant_acciones, valores_port)
 
 # -- --------------------------------------------------------------------------------------------------- -Paso 1.8 - #
-# Acomodar los valores para poder formar el DataFrame
+# Sumar el valor de cash a cada uno de los valores del portafolio
 
 
-def get_values_pasiva(valores_portafolio, comision):
+def get_values_pasiva(valores_portafolio, valor_comision):
     """
     Funcion que retorna los valores que seran necesarios para el DataFrame final de la inversion pasiva.
     Los valores del portafolio, las fechas, los rendimientos.
@@ -147,7 +149,7 @@ def get_values_pasiva(valores_portafolio, comision):
     Parameters
     ---------
     valores_portafolio: list: lista que contiene los valores del portafolio.
-    comision: float: valor correspondiente a la comision de la operacion.
+    valor_comision: float: valor correspondiente a la comision de la operacion.
 
     Returns
     ---------
@@ -166,14 +168,14 @@ def get_values_pasiva(valores_portafolio, comision):
     valores_portafolio = pd.DataFrame(valores_portafolio)
 
     # Calculamos el valor de cash
-    cash = ((dt.V_port - valores_portafolio.iloc[1]) - comision)
+    cash = ((dt.V_port - valores_portafolio.iloc[1]) - valor_comision)
 
     # Sumamos el cash a los valores del portafolio
-    for i in range(0, len(valores_portafolio)):
-        if i == 0:
-            valores_portafolio.loc[i] = 1000000
+    for w in range(0, len(valores_portafolio)):
+        if w == 0:
+            valores_portafolio.loc[w] = 1000000
         else:
-            valores_portafolio.loc[i] = valores_portafolio.loc[i] + cash
+            valores_portafolio.loc[w] = valores_portafolio.loc[w] + cash
 
     # Calcular rendimientos de los valores del portafolio
     rend = valores_portafolio.pct_change().dropna()
@@ -181,13 +183,13 @@ def get_values_pasiva(valores_portafolio, comision):
     return valores_portafolio, rend
 
 
-valores_port, rendimientos = get_values_pasiva(valores_port, suma_comision)
+valores_port_pasiva, rendimientos_pasiva = get_values_pasiva(valores_port_pasiva, suma_comision)
 
 # -- --------------------------------------------------------------------------------------------------- -Paso 1.9 - #
 # Agregamos a la lista de fechas, un dia antes del comienzo de la inversion
 
-fecha = datetime.strptime('30/1/2018', '%d/%m/%Y').date()
-dt.files_date.append(fecha)
+val = datetime.strptime('30/1/2018', '%d/%m/%Y').date()
+dt.files_date.append(val)
 dt.files_date.sort()
 
 
@@ -228,7 +230,7 @@ def get_df(fechas, valores_portafolio, rend):
     return pasiva
 
 
-df_pasiva = get_df(dt.files_date, valores_port, rendimientos)
+df_pasiva = get_df(dt.files_date, valores_port_pasiva, rendimientos_pasiva)
 
 # -- --------------------------------------------------------------------------------------------------- -Paso 1.11 - #
 # Inversion activa, datos iniciales
@@ -293,17 +295,18 @@ def get_operaciones(datos, fechas, cash_disponible, val_comision):
        titulos_t: lista: lista que contiene los titulos que tenemos dia con dia
        titulos_c: lista: lista que contiene los titulos que compramos dia con dia
        precio: lista: lista que contiene los precios de las acciones.
-       comision_1: lista: lista que contiene las comisiones de las operaciones
+       comision_1: lista: lista que contiene las comisiones de las operaciones.
+       lista_cash: lista: lista que contiene los valores de cash para cada fecha.
 
        Debuggin
        ---------
        date, titulos_t, titulos_c, precio, comision_1 = get_operaciones(dt.descarga, dt.files_date, Cash, dt.Comision)
 
        """
-    for i in range(0, len(datos.columns) - 1):
+    for k in range(0, len(datos.columns) - 1):
 
-        t = datos.columns[i + 1]  # Nombro la fecha del dia de hoy
-        tm1 = datos.columns[i]  # Nombro la fecha del dia de ayer
+        t = datos.columns[k + 1]  # Nombro la fecha del dia de hoy
+        tm1 = datos.columns[k]  # Nombro la fecha del dia de ayer
 
         ayer_apertura = float(datos.loc[ticker_amax, 'Open'][tm1])  # Nombro el precio de ayer de apertura
         ayer_cierre = float(datos.loc[ticker_amax, 'Close'][tm1])  # Nombre el precio de ayer de cierre
@@ -333,21 +336,22 @@ def get_operaciones(datos, fechas, cash_disponible, val_comision):
             date.append(t)
             titulos_c.append(cant_titulos)
             comision_1.append(cant_titulos * val_comision * precio_dia)
-            titulos_t.append(titulos_t[i] + titulos_c[i + 1])
+            titulos_t.append(titulos_t[k] + titulos_c[k + 1])
             precio.append(precio_dia)
         else:
             date.append(t)
-            titulos_t.append(titulos_t[i])
+            titulos_t.append(titulos_t[k])
             titulos_c.append(0)
             comision_1.append(0)
             precio.append(0)
             gasto_titulos.append(costo_acciones[indice_amax])
             lista_cash.append(cash_disponible)
 
-    return date, titulos_t, titulos_c, precio, comision_1
+    return date, titulos_t, titulos_c, precio, comision_1, lista_cash
 
 
-date, titulos_t, titulos_c, precio, comision_1 = get_operaciones(dt.descarga, dt.files_date, Cash, dt.Comision)
+date, titulos_t, titulos_c, precios_diarios, comision_1, lista_cash = get_operaciones(dt.descarga, dt.files_date, Cash,
+                                                                                      dt.Comision)
 
 # -- --------------------------------------------------------------------------------------------------- -Paso 1.14 - #
 # Creacion del DataFrame de las operaciones diarias
@@ -374,20 +378,19 @@ def get_df_operaciones(fechas, titulos1, titulos2, precios, comisiones):
        date, titulos_t, titulos_c, precio, comision_1 = get_operaciones(dt.descarga, dt.files_date, Cash, dt.Comision)
 
        """
-    df_operaciones = pd.DataFrame(columns={'timestamp', 'titulos_t', 'titulos_c', 'precio',
-                                           'comision', 'comision_acum'})
-    df_operaciones['timestamp'] = fechas
-    df_operaciones['titulos_t'] = titulos1
-    df_operaciones['titulos_c'] = titulos2
-    df_operaciones['precio'] = precios
-    df_operaciones['comision'] = comisiones
-    df_operaciones['comision_acum'] = np.cumsum(comisiones)
-    df_operaciones.index = df_operaciones['timestamp']
-    del df_operaciones["timestamp"]
-    return df_operaciones
+    operaciones = pd.DataFrame(columns={'timestamp', 'titulos_t', 'titulos_c', 'precio', 'comision', 'comision_acum'})
+    operaciones['timestamp'] = fechas
+    operaciones['titulos_t'] = titulos1
+    operaciones['titulos_c'] = titulos2
+    operaciones['precio'] = precios
+    operaciones['comision'] = comisiones
+    operaciones['comision_acum'] = np.cumsum(comisiones)
+    operaciones.index = operaciones['timestamp']
+    del operaciones["timestamp"]
+    return operaciones
 
 
-df_operaciones = get_df_operaciones(date, titulos_t, titulos_c, precio, comision_1)
+df_operaciones = get_df_operaciones(date, titulos_t, titulos_c, precios_diarios, comision_1)
 
 # -- --------------------------------------------------------------------------------------------------- -Paso 1.14 - #
 # Obtener datos y DataFrame de inversion Activa
@@ -422,14 +425,12 @@ def get_values_activa(fechas, tickers, val_comision, datos):
 
         """
     comisiones_pormes = []
-    valores_portafolio = []
-    cash = []
-    valores_portafolio.append(1000000)
+    valores_portafolio = [1000000]
     for j in range(1, len(fechas)):
         precios = get_precio(datos, tickers, fechas[j])
         Cant_acciones[indice_amax] = titulos_pormes[j-1]
         calculo_comision = Cant_acciones*val_comision*precios
-        if i > 1:
+        if j > 1:
             sum_comision = np.sum(calculo_comision[indice_amax])
             comisiones_pormes.append(sum_comision)
         else:
@@ -468,20 +469,20 @@ def add_cash_activa(fechas1, fechas2, portafolio, l_cash):
     return portafolio
 
 
-valores_port = add_cash_activa(dt.files_date, date, valores_port, lista_cash)
+valores_port_activa = add_cash_activa(dt.files_date, date, valores_port, lista_cash)
 
 # Sacamos los rendimientos de la serie de tiempo de los valores del portafolio)
-final_data = valores_port.pct_change().dropna()
+rendimientos_activa = valores_port_activa.pct_change().dropna()
 
 # Obtener DataFrame Mensual de la inversion activa
-df_activa = get_df(dt.files_date, valores_port, final_data)
+df_activa = get_df(dt.files_date, valores_port_activa, rendimientos_activa)
 
 # -- --------------------------------------------------------------------------------------------------- -Paso 1.16 - #
 # Obtener el cuadro de comparacion entre ambas inversiones
 
 # Obtencion de datos
 # Calculo de Sharpe
-rf = (4.42/12) / 100
+rf = (7.7/12) / 100
 media_pasiva = float(np.mean(df_pasiva.loc[dt.files_date[1]:]['rend']))
 desves_pasiva = float(np.std(df_pasiva.loc[dt.files_date[1]:]['rend']))
 media_activa = float(np.mean(df_activa.loc[dt.files_date[1]:]['rend']))
@@ -491,7 +492,7 @@ sharpe_p = (media_pasiva - rf)/desves_pasiva
 
 # Creacion de DataFrame
 
-df_medidas = pd.DataFrame(columns= ['medida', 'descripcion', 'inv_activa', 'inv_pasiva'])
+df_medidas = pd.DataFrame(columns=['medida', 'descripcion', 'inv_activa', 'inv_pasiva'])
 df_medidas['medida'] = ['rend_m', 'rend_c', 'sharpe']
 df_medidas['descripcion'] = ['Rendimiento Promedio Mensual', 'Rendimiento Mensual Acumulado', 'Sharpe Ratio']
 df_medidas['inv_activa'] = [media_activa, df_activa.loc[dt.files_date[len(dt.files_date)-1]]['rend_acum'], sharpe_a]

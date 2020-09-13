@@ -1,13 +1,16 @@
 
 # -- --------------------------------------------------------------------------------------------------- -- #
-# -- project: A SHORT DESCRIPTION OF THE PROJECT                                                         -- #
+# -- project: Comparison between pasive and active investment.                                           -- #
 # -- script: requirements.txt : text file with the required libraries for the project                    -- #
-# -- author: YOUR GITHUB USER NAME                                                                       -- #
+# -- author: AraceliCastillo                                                                             -- #
 # -- license: GPL-3.0 License                                                                            -- #
-# -- repository: YOUR REPOSITORY URL                                                                     -- #
+# -- repository: https://github.com/AraceliCastillo/myst_if708243_lab1                                   -- #
 # -- --------------------------------------------------------------------------------------------------- -- #
 
-numpy == 1.19.1
-pandas == 1.1.1
-jupyter == 1.0.0
-yfinance == 0.1.54
+
+
+numpy >= 1.19.1
+pandas >= 1.1.1
+jupyter >= 1.0.0
+yfinance >= 0.1.54
+plotly >= 4.2.0
