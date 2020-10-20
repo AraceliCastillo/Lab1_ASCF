@@ -41,7 +41,7 @@ def get_precio(datos, tickers, fecha):
     # Definimos la lista en la que se guardaran los precios.
     precios = []
     for j in tickers:
-        precio_dia = datos.loc[j, 'Close'][fecha]  # Seleccionamos el precio de close
+        precio_dia = datos.loc[j, 'Close'][str(fecha)]  # Seleccionamos el precio de close
         # para ticker y fecha correspondiente.
         precios.append(precio_dia)  # Guardamos en la lista los precios.
     return precios
@@ -399,7 +399,7 @@ df_operaciones = get_df_operaciones(date, titulos_t, titulos_c, precios_diarios,
 # Cantidad de titulos que se tuvo en cada cierre de mes
 titulos_pormes = []
 for i in range(1, len(dt.files_date)):
-    titulos_pormes.append(df_operaciones.loc[dt.files_date[i]]['titulos_t'])
+    titulos_pormes.append(df_operaciones.loc[str(dt.files_date[i])]['titulos_t'])
 
 # Calculo de los valores del portafolio mensuales de la inversion activa
 
@@ -456,7 +456,7 @@ def add_cash_activa(fechas1, fechas2, portafolio, l_cash):
 
     cash_value = []
     for a in range(1, len(fechas1)):
-        cash_value.append(float(df_cash.loc[fechas1[a]]))
+        cash_value.append(float(df_cash.loc[str(fechas1[a])]))
 
     for v in range(0, len(portafolio)):
         if v == 0:
